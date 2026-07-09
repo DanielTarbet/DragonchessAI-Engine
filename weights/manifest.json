@@ -1,0 +1,38 @@
+{
+  "piece_order": [
+    "Sylph",
+    "Griffin",
+    "Dragon",
+    "Oliphant",
+    "Unicorn",
+    "Hero",
+    "Thief",
+    "Cleric",
+    "Mage",
+    "Paladin",
+    "Warrior",
+    "Basilisk",
+    "Elemental",
+    "Dwarf"
+  ],
+  "agents": {
+    "td_lambda": {
+      "file": "td_lambda.csv",
+      "engine_ai": "tdeval",
+      "dim": 40,
+      "description": "Linear evaluation over 40 features (14 material + 26 Dragonchess positional), trained by self-play TD(lambda), lambda=0.7, lr=0.05, at alpha-beta depth 2."
+    },
+    "cma_es": {
+      "file": "cma_es.csv",
+      "engine_ai": "evolvable",
+      "dim": 14,
+      "description": "14 piece values evolved with CMA-ES against an alpha-beta(depth 2) opponent."
+    },
+    "jackman": {
+      "file": "jackman.csv",
+      "engine_ai": "evolvable",
+      "dim": 14,
+      "description": "Handcrafted Dragonchess piece values (Jackman, 1999)."
+    }
+  }
+}

@@ -1,0 +1,32 @@
+# Build directories
+build/
+build-*/
+cmake-build-*/
+
+# Compiled artifacts
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+dragonchess
+test_dragonchess
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Generated tournament output
+tournament_results.json
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+__pycache__/
+*.pyc
