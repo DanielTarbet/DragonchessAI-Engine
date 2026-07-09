@@ -114,6 +114,25 @@ docs/           Plugin API documentation
 assets/         Piece art and fonts for the GUI
 ```
 
+## Citation
+
+This engine accompanies:
+
+> J. O'Connor, A. Hoag, S. Goyette, and G. B. Parker. "Evolutionary Transfer
+> Learning for Dragonchess." In *Proceedings of the 18th International Conference
+> on Agents and Artificial Intelligence (ICAART)*, SciTePress, 2026.
+
+```bibtex
+@inproceedings{oconnor2026dragonchess,
+  title     = {Evolutionary Transfer Learning for Dragonchess},
+  author    = {O'Connor, Jim and Hoag, Annika and Goyette, Sarah and Parker, Gary B.},
+  booktitle = {Proceedings of the 18th International Conference on Agents and
+               Artificial Intelligence (ICAART)},
+  publisher = {SciTePress},
+  year      = {2026}
+}
+```
+
 ## License
 
 See [LICENSE](LICENSE).
