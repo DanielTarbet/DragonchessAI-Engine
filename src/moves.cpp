@@ -55,7 +55,7 @@ std::vector<Move> generate_sylph_moves(const Position& pos, const Board& board, 
         // Allow moves to designated home cells
         int target_layer = 0;
         if (color == Color::GOLD) {
-            int home_row = BOARD_ROWS - 1; // row 7
+            int home_row = BOARD_ROWS - 2; // row 7
             for (int c = 0; c < BOARD_COLS; c += 2) {
                 if (in_bounds(target_layer, home_row, c) && 
                     board[pos_to_index(target_layer, home_row, c)] == EMPTY) {
@@ -63,8 +63,8 @@ std::vector<Move> generate_sylph_moves(const Position& pos, const Board& board, 
                 }
             }
         } else {
-            int home_row = 0;
-            for (int c = 1; c < BOARD_COLS; c += 2) {
+            int home_row = 1;
+            for (int c = 0; c < BOARD_COLS; c += 2) {
                 if (in_bounds(target_layer, home_row, c) && 
                     board[pos_to_index(target_layer, home_row, c)] == EMPTY) {
                     moves.push_back({from_idx, pos_to_index(target_layer, home_row, c), QUIET});
@@ -204,27 +204,6 @@ std::vector<Move> generate_dragon_moves(const Position& pos, const Board& board,
     
     // Adjacent squares on Ground board
     std::array<std::pair<int,int>, 4> orthogonals = {{{0,1}, {0,-1}, {1,0}, {-1,0}}};
-    for (auto [dr, dc] : orthogonals) {
-        int new_row = row + dr;
-        int new_col = col + dc;
-        if (in_bounds(target_layer, new_row, new_col)) {
-            int to_idx = pos_to_index(target_layer, new_row, new_col);
-            if (board[to_idx] != EMPTY && IS_ENEMY(board[to_idx], color)) {
-                moves.push_back({from_idx, to_idx, AFAR});
-            }
-        }
-    }
-    
-    // From Sky (layer 0) to Underworld (layer 2) - same position
-    target_layer = 2;
-    if (in_bounds(target_layer, row, col)) {
-        int to_idx = pos_to_index(target_layer, row, col);
-        if (board[to_idx] != EMPTY && IS_ENEMY(board[to_idx], color)) {
-            moves.push_back({from_idx, to_idx, AFAR});
-        }
-    }
-    
-    // Adjacent squares on Underworld board
     for (auto [dr, dc] : orthogonals) {
         int new_row = row + dr;
         int new_col = col + dc;
@@ -493,12 +472,19 @@ std::vector<Move> generate_mage_moves(const Position& pos, const Board& board, C
         }
         
         // Can move 1 or 2 cells vertically
-        for (int d : {-2, -1, 1, 2}) {
-            int new_row = row + d;
-            if (in_bounds(layer, new_row, col)) {
-                int to_idx = pos_to_index(layer, new_row, col);
+        for (layer : {0, 2}) {
+            dl = 1 - layer;
+            int between_layer = layer + dl;
+            if (in_bounds(between_layer, row, col)) {
+                int to_idx = pos_to_index(between_layer, row, col);
                 if (board[to_idx] == EMPTY || IS_ENEMY(board[to_idx], color)) {
                     moves.push_back({from_idx, to_idx, AMBIGUOUS});
+                }
+                if (board[to_idx] == EMPTY) {
+                    to_idx = pos_to_index(between_layer+dl, row, col);
+                    if (board[to_idx] == EMPTY || IS_ENEMY(board[to_idx], color)) {
+                        moves.push_back({from_idx, to_idx, AMBIGUOUS});
+                    }
                 }
             }
         }
@@ -604,23 +590,23 @@ std::vector<Move> generate_paladin_moves(const Position& pos, const Board& board
                 }
             }
         }
+    }
         
-        // 3D knight moves (unblockable)
-        for (int d_layer = -2; d_layer <= 2; ++d_layer) {
-            if (d_layer == 0) continue;
-            for (int d_row = -2; d_row <= 2; ++d_row) {
-                for (int d_col = -2; d_col <= 2; ++d_col) {
-                    std::array<int, 3> diffs = {std::abs(d_layer), std::abs(d_row), std::abs(d_col)};
-                    std::sort(diffs.begin(), diffs.end());
-                    if (diffs[0] == 0 && diffs[1] == 1 && diffs[2] == 2) {
-                        int new_layer = layer + d_layer;
-                        int new_row = row + d_row;
-                        int new_col = col + d_col;
-                        if (in_bounds(new_layer, new_row, new_col)) {
-                            int to_idx = pos_to_index(new_layer, new_row, new_col);
-                            if (board[to_idx] == EMPTY || IS_ENEMY(board[to_idx], color)) {
-                                moves.push_back({from_idx, to_idx, THREED});
-                            }
+    // 3D knight moves (unblockable)
+    for (int d_layer = -2; d_layer <= 2; ++d_layer) {
+        if (d_layer == 0) continue;
+        for (int d_row = -2; d_row <= 2; ++d_row) {
+            for (int d_col = -2; d_col <= 2; ++d_col) {
+                std::array<int, 3> diffs = {std::abs(d_layer), std::abs(d_row), std::abs(d_col)};
+                std::sort(diffs.begin(), diffs.end());
+                if (diffs[0] == 0 && diffs[1] == 1 && diffs[2] == 2) {
+                    int new_row = row + d_row;
+                    int new_layer = layer + d_layer;
+                    int new_col = col + d_col;
+                    if (in_bounds(new_layer, new_row, new_col)) {
+                        int to_idx = pos_to_index(new_layer, new_row, new_col);
+                        if (board[to_idx] == EMPTY || IS_ENEMY(board[to_idx], color)) {
+                            moves.push_back({from_idx, to_idx, THREED});
                         }
                     }
                 }
@@ -837,16 +823,6 @@ std::vector<Move> generate_dwarf_moves(const Position& pos, const Board& board, 
         if (in_bounds(target_layer, row, col) && 
             board[pos_to_index(target_layer, row, col)] == EMPTY) {
             moves.push_back({from_idx, pos_to_index(target_layer, row, col), QUIET});
-        }
-    }
-    
-    // Reverse move if at edge
-    if (!in_bounds(layer, row + direction, col)) {
-        int reverse = -direction;
-        int reverse_row = row + reverse;
-        if (in_bounds(layer, reverse_row, col) && 
-            board[pos_to_index(layer, reverse_row, col)] == EMPTY) {
-            moves.push_back({from_idx, pos_to_index(layer, reverse_row, col), QUIET});
         }
     }
     
