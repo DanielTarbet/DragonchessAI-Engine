@@ -232,6 +232,30 @@ bool Game::redo_move() {
 }
 
 void Game::update() {
+    //promote warriors
+    for (auto [row, warrior] : {
+            std::pair{0, GOLD_WARRIOR},
+            std::pair{BOARD_ROWS-1, SCARLET_WARRIOR}
+        }) {
+        for (int col = 0; col < BOARD_COLS; ++col) {
+            int idx_middle = pos_to_index(1, row, col);
+            int16_t piece = board[idx_middle];
+
+            // Check if it's a Warrior
+            if (piece == warrior) {
+                int idx_middle = pos_to_index(1, row, col);
+                
+                // promote
+                if (piece == GOLD_WARRIOR) {
+                    board[idx_middle] = GOLD_HERO;
+                } else {
+                    board[idx_middle] = SCARLET_HERO;
+                }
+            }
+        }
+    }
+
+
     // Reset frozen pieces
     frozen.fill(false);
     
