@@ -472,8 +472,8 @@ std::vector<Move> generate_mage_moves(const Position& pos, const Board& board, C
         }
         
         // Can move 1 or 2 cells vertically
-        for (layer : {0, 2}) {
-            dl = 1 - layer;
+        for (int layer : {0, 2}) {
+            int dl = 1 - layer;
             int between_layer = layer + dl;
             if (in_bounds(between_layer, row, col)) {
                 int to_idx = pos_to_index(between_layer, row, col);
