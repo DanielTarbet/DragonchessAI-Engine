@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.15)
 project(Dragonchess VERSION 1.0.0 LANGUAGES CXX)
 
+if(WIN32)
+    find_package(dlfcn-win32 CONFIG REQUIRED)
+    set(PLATFORM_DL_LIBS dlfcn-win32::dl)
+else()
+    set(PLATFORM_DL_LIBS ${CMAKE_DL_LIBS})
+endif()
+
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -53,14 +61,14 @@ add_executable(dragonchess ${SOURCES})
 
 if(HEADLESS_ONLY)
     target_link_libraries(dragonchess
-        dl
+        ${PLATFORM_DL_LIBS}
     )
 else()
     target_link_libraries(dragonchess
         ${SDL2_LIBRARIES}
         SDL2_image::SDL2_image
         SDL2_ttf::SDL2_ttf
-        dl
+        ${PLATFORM_DL_LIBS}
     )
 endif()
 
